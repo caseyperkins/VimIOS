@@ -6469,7 +6469,7 @@
 				TargetAttributes = {
 					46BEBEE51BE0634800DF78C8 = {
 						CreatedOnToolsVersion = 7.1;
-						DevelopmentTeam = WB97F4TN5Z;
+						DevelopmentTeam = AW6ZS47L93;
 						LastSwiftMigration = 0810;
 						SystemCapabilities = {
 							com.apple.iCloud = {
@@ -6496,6 +6496,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
@@ -6767,22 +6768,24 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = VimIOS/VimIOS.entitlements;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = AW6ZS47L93;
 				GCC_PREFIX_HEADER = "${SRCROOT}/VimIOS/ios_prefix.h";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/**";
 				INFOPLIST_FILE = VimIOS/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/vim/src/xpm/x64/lib",
 					"$(PROJECT_DIR)/vim/src/xpm/x86/lib",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = larki.VimIOS;
+				PRODUCT_BUNDLE_IDENTIFIER = com.perkinscentral.voicevim;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_DISABLE_SAFETY_CHECKS = NO;
 				SWIFT_OBJC_BRIDGING_HEADER = "VimIOS/VimIOS-Bridging-Header.h";
 				"SWIFT_OBJC_BRIDGING_HEADER[arch=*]" = "VimIOS/VimIOS-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 				USER_HEADER_SEARCH_PATHS = "/Users/Lars/vimIOS/VimIOS/**";
 			};
 			name = Debug;
@@ -6792,23 +6795,25 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-                CODE_SIGN_ENTITLEMENTS = VimIOS/VimIOS.entitlements;
+				CODE_SIGN_ENTITLEMENTS = VimIOS/VimIOS.entitlements;
+				DEVELOPMENT_TEAM = AW6ZS47L93;
 				GCC_PREFIX_HEADER = "${SRCROOT}/VimIOS/ios_prefix.h";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/**";
 				INFOPLIST_FILE = VimIOS/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/vim/src/xpm/x64/lib",
 					"$(PROJECT_DIR)/vim/src/xpm/x86/lib",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = larki.VimIOS;
+				PRODUCT_BUNDLE_IDENTIFIER = com.perkinscentral.voicevim;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_DISABLE_SAFETY_CHECKS = NO;
 				SWIFT_OBJC_BRIDGING_HEADER = "";
 				"SWIFT_OBJC_BRIDGING_HEADER[arch=*]" = "VimIOS/VimIOS-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 				USER_HEADER_SEARCH_PATHS = "/Users/Lars/vimIOS/VimIOS/**";
 			};
 			name = Release;

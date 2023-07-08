@@ -22,13 +22,13 @@ class VimView: UIView {
     var shellLayer : CGLayer?
     var shellSize = 1366
     
-    var char_ascent=CGFloat(0)
-    var char_width=CGFloat(0)
-    var char_height=CGFloat(0)
+    @objc var char_ascent=CGFloat(0)
+    @objc var char_width=CGFloat(0)
+    @objc var char_height=CGFloat(0)
     
-    var bgcolor:CGColor?
-    var fgcolor:CGColor?
-    var spcolor:CGColor?
+    @objc var bgcolor: CGColor?
+    @objc var fgcolor: CGColor?
+    @objc var spcolor: CGColor?
     
     
     override init(frame: CGRect) {
@@ -36,9 +36,11 @@ class VimView: UIView {
         shellSize = max(Int(UIScreen.main.bounds.width), Int(UIScreen.main.bounds.height))
         
     }
+    
     required init?(coder aDecoder: NSCoder) {
         super.init(coder:aDecoder)
     }
+    
     override func draw(_ rect: CGRect) {
         guard let layer = shellLayer else {
             let scale = UIScreen.main.scale
@@ -69,14 +71,14 @@ class VimView: UIView {
         resizeShell()
     }
     
-    func resizeShell() {
+    @objc func resizeShell() {
         print("Resizing to \(frame)")
         gui_resize_shell(CInt(frame.width), CInt(frame.height))
     }
     
     
     
-    func CGLayerCopyRectToRect(_ layer: CGLayer? , sourceRect: CGRect , targetRect: CGRect) {
+    @objc func CGLayerCopyRectToRect(_ layer: CGLayer? , sourceRect: CGRect , targetRect: CGRect) {
         guard let layer = layer else {return}
         
         let context = layer.context
@@ -99,11 +101,13 @@ class VimView: UIView {
         dirtyRect = dirtyRect.union(destinationRect)
         context!.restoreGState()
     }
+    
     func CGLayerCopyRectToRect(_ sourceRect: CGRect , targetRect: CGRect) {
         CGLayerCopyRectToRect(shellLayer, sourceRect: sourceRect, targetRect: targetRect)
     }
 
-    func flush(){
+    
+    @objc func flush(){
         shellLayer!.context!.flush()
         self.setNeedsDisplay(dirtyRect)
 //        if(dirtyRect.height>1) {
@@ -113,7 +117,8 @@ class VimView: UIView {
         
     }
     
-    func clearAll() {
+    
+    @objc func clearAll() {
         if let layer = shellLayer {
         let  size = layer.size
         
@@ -124,7 +129,8 @@ class VimView: UIView {
         }
     }
     
-    func fillRectWithColor(_ rect: CGRect, color: CGColor?) {
+    
+    @objc func fillRectWithColor(_ rect: CGRect, color: CGColor?) {
             //print("In fillRectWithColor \(rect), \(color)")
         if let layer = shellLayer, let color = color {
             let context = layer.context
@@ -135,7 +141,8 @@ class VimView: UIView {
             }
     }
     
-    func drawString(_ s:NSAttributedString,
+    
+    @objc func drawString(_ s:NSAttributedString,
         font: CTFont,
         pos_x:CGFloat,
         pos_y: CGFloat,
@@ -186,7 +193,8 @@ class VimView: UIView {
             
     }
     
-    func initFont() -> CTFont {
+    
+    @objc func initFont() -> CTFont {
         let rawFont = CTFontCreateWithName(font.name as CFString, font.size, nil)
         
         var boundingRect = CGRect.zero;

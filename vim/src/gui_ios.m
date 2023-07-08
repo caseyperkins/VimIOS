@@ -459,7 +459,9 @@ gui_mch_delete_lines(int row, int num_lines)
                                    FILL_X(gui.scroll_region_right+1) - FILL_X(gui.scroll_region_left),
                                    FILL_Y(gui.scroll_region_bot+1) - FILL_Y(row + num_lines));
 
-    [getView() CGLayerCopyRectToRect:sourceRect targetRect:targetRect];
+    /// CASEY
+    ///[getView() CGLayerCopyRectToRect:sourceRect targetRect:targetRect];
+    [getView() CGLayerCopyRectToRect:nil sourceRect:sourceRect targetRect:targetRect];
 //
     gui_clear_block(gui.scroll_region_bot - num_lines + 1,
                     gui.scroll_region_left,
@@ -485,7 +487,9 @@ gui_mch_insert_lines(int row, int num_lines)
                                   FILL_X(gui.scroll_region_right+1) - FILL_X(gui.scroll_region_left),
                                   FILL_Y(gui.scroll_region_bot+1) - FILL_Y(row + num_lines));
    
-    [getView() CGLayerCopyRectToRect:sourceRect targetRect:targetRect];
+    /// CASEY
+    ///[getView() CGLayerCopyRectToRect:sourceRect targetRect:targetRect];
+    [getView() CGLayerCopyRectToRect:nil sourceRect:sourceRect targetRect:targetRect];
 //
     gui_clear_block(row, gui.scroll_region_left,
                     row + num_lines - 1, gui.scroll_region_right);

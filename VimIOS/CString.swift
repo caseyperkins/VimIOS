@@ -18,7 +18,8 @@ class CString {
     }
     
     deinit {
-        buffer.deallocate(capacity: _len)
+        //buffer.deallocate(capacity: _len)
+        buffer.deallocate()
     }
 }
 

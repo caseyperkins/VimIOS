@@ -22,13 +22,13 @@ let shiftableHotkeys = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 
 class VimViewController: UIViewController, UIKeyInput, UITextInputTraits {
-    var vimView: VimView?
+    @objc var vimView: VimView?
     var hasBeenFlushedOnce = false
     var lastKeyPress = Date()
     
-    var blink_wait:CLong = 1000
-    var blink_on:CLong = 1000
-    var blink_off:CLong = 1000
+    @objc var blink_wait: CLong = 1000
+    @objc var blink_on: CLong = 1000
+    @objc var blink_off: CLong = 1000
     var state:blink_state = .none
     var blinkTimer : Timer?
     
@@ -46,9 +46,9 @@ class VimViewController: UIViewController, UIKeyInput, UITextInputTraits {
     
     
     override func viewWillAppear(_ animated: Bool) {
-        NotificationCenter.default.addObserver(self, selector: #selector(VimViewController.keyboardWillShow(_:)), name:NSNotification.Name.UIKeyboardWillShow, object:nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(VimViewController.keyboardDidShow(_:)), name:NSNotification.Name.UIKeyboardDidShow, object:nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(VimViewController.keyboardWillHide(_:)), name:NSNotification.Name.UIKeyboardWillHide, object:nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(VimViewController.keyboardWillShow(_:)), name:UIResponder.keyboardWillShowNotification, object:nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(VimViewController.keyboardDidShow(_:)), name:UIResponder.keyboardDidShowNotification, object:nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(VimViewController.keyboardWillHide(_:)), name:UIResponder.keyboardWillHideNotification, object:nil)
     }
     
     override func viewDidLoad() {
@@ -88,19 +88,22 @@ class VimViewController: UIViewController, UIKeyInput, UITextInputTraits {
         #endif
     }
     
-    func click(_ sender: UITapGestureRecognizer) {
+    @objc func click(_ sender: UITapGestureRecognizer) {
         becomeFirstResponder()
         let clickLocation = sender.location(in: sender.view)
         gui_send_mouse_event(0, Int32(clickLocation.x), Int32(clickLocation.y), 1,0)
     }
-    func longPress(_ sender: UILongPressGestureRecognizer) {
+    
+    
+    @objc func longPress(_ sender: UILongPressGestureRecognizer) {
         if(sender.state == .began) {
         becomeFirstResponder()
         toggleKeyboardBar()
         }
     }
     
-    func flush() {
+    
+    @objc func flush() {
         if(!hasBeenFlushedOnce) {
             hasBeenFlushedOnce = true
             DispatchQueue.main.async{ self.becomeFirstResponder()}
@@ -108,7 +111,8 @@ class VimViewController: UIViewController, UIKeyInput, UITextInputTraits {
         vimView?.flush()
     }
     
-    func blinkCursorTimer() {
+    
+    @objc func blinkCursorTimer() {
         blinkTimer?.invalidate()
         if(state == .on) {
             gui_undraw_cursor()
@@ -123,19 +127,18 @@ class VimViewController: UIViewController, UIKeyInput, UITextInputTraits {
             blinkTimer = Timer.scheduledTimer(timeInterval: on_time, target:self, selector:#selector(VimViewController.blinkCursorTimer), userInfo:nil, repeats:false)
         }
         vimView?.setNeedsDisplay((vimView?.dirtyRect)!)
-        
-        
-        
     }
     
-    func startBlink() {
+    
+    @objc func startBlink() {
         blinkTimer?.invalidate()
         blinkTimer = Timer.scheduledTimer(timeInterval: Double(blink_wait)/1000.0, target: self,  selector: #selector(VimViewController.blinkCursorTimer), userInfo: nil, repeats: false)
         state = .on
         gui_update_cursor(1,0)
     }
     
-    func stopBlink() {
+    
+    @objc func stopBlink() {
         blinkTimer?.invalidate()
         state = .none
         blinkTimer=nil
@@ -200,9 +203,9 @@ class VimViewController: UIViewController, UIKeyInput, UITextInputTraits {
     
     
     //MARK: OnScreen Keyboard Handling
-    func keyboardWillShow(_ notification: Notification) {
+    @objc func keyboardWillShow(_ notification: Notification) {
         guard let vView = vimView else { return}
-        let keyboardRect = (notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as AnyObject).cgRectValue
+        let keyboardRect = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as AnyObject).cgRectValue
         let keyboardRectInViewCoordinates = view!.window!.convert(keyboardRect!, to: vimView)
         print("KeyboardWillShow \(keyboardRectInViewCoordinates)")
         
@@ -212,15 +215,17 @@ class VimViewController: UIViewController, UIKeyInput, UITextInputTraits {
     
     }
     
-    func keyboardDidShow(_ notification: Notification) {
+    @objc func keyboardDidShow(_ notification: Notification) {
     
     }
-    func keyboardWillHide(_ notification: Notification) {
+    
+    
+    @objc func keyboardWillHide(_ notification: Notification) {
         keyboardWillShow(notification)
         print("Will Hide!")
     }
     
-    func handleBarButton(_ sender: UIBarButtonItem) {
+    @objc func handleBarButton(_ sender: UIBarButtonItem) {
         switch sender.title! {
         case "ESC":
             insertText(UnicodeScalar(Int(keyESC))!.description)
@@ -245,15 +250,15 @@ class VimViewController: UIViewController, UIKeyInput, UITextInputTraits {
             self.keyCommandArray! += [UIKeyCommand(input:  letter, modifierFlags: $0 , action: #selector(VimViewController.keyPressed(_:)))]
             })
         }
-        self.keyCommandArray! += [UIKeyCommand(input:UIKeyInputEscape, modifierFlags: [], action: #selector(VimViewController.keyPressed(_:)))]
-        self.keyCommandArray! += [UIKeyCommand(input:UIKeyInputDownArrow, modifierFlags: [], action: #selector(VimViewController.keyPressed(_:)))]
-        self.keyCommandArray! += [UIKeyCommand(input:UIKeyInputUpArrow, modifierFlags: [], action: #selector(VimViewController.keyPressed(_:)))]
-        self.keyCommandArray! += [UIKeyCommand(input:UIKeyInputLeftArrow, modifierFlags: [], action: #selector(VimViewController.keyPressed(_:)))]
-        self.keyCommandArray! += [UIKeyCommand(input:UIKeyInputRightArrow, modifierFlags: [], action: #selector(VimViewController.keyPressed(_:)))]
+        self.keyCommandArray! += [UIKeyCommand(input:UIKeyCommand.inputEscape, modifierFlags: [], action: #selector(VimViewController.keyPressed(_:)))]
+        self.keyCommandArray! += [UIKeyCommand(input:UIKeyCommand.inputDownArrow, modifierFlags: [], action: #selector(VimViewController.keyPressed(_:)))]
+        self.keyCommandArray! += [UIKeyCommand(input:UIKeyCommand.inputUpArrow, modifierFlags: [], action: #selector(VimViewController.keyPressed(_:)))]
+        self.keyCommandArray! += [UIKeyCommand(input:UIKeyCommand.inputLeftArrow, modifierFlags: [], action: #selector(VimViewController.keyPressed(_:)))]
+        self.keyCommandArray! += [UIKeyCommand(input:UIKeyCommand.inputRightArrow, modifierFlags: [], action: #selector(VimViewController.keyPressed(_:)))]
         //print("Number of Hotkeys \(keyCommands?.count)")
     }
     
-    func keyPressed(_ sender: UIKeyCommand) {
+    @objc func keyPressed(_ sender: UIKeyCommand) {
         lastKeyPress = Date()
         
         //print("Input \(sender.input), Modifier \(sender.modifierFlags)")
@@ -261,22 +266,22 @@ class VimViewController: UIViewController, UIKeyInput, UITextInputTraits {
             switch sender.modifierFlags.rawValue {
             case 0:
                 switch sender.input {
-                case UIKeyInputEscape:
+                case UIKeyCommand.inputEscape:
                     return UnicodeScalar(Int(keyESC))!.description
-                case UIKeyInputDownArrow:
+                case UIKeyCommand.inputDownArrow:
                     do_cmdline_cmd("call feedkeys(\"\\<Down>\")".char)
                     return ""
-                case UIKeyInputUpArrow:
+                case UIKeyCommand.inputUpArrow:
                     do_cmdline_cmd("call feedkeys(\"\\<Up>\")".char)
                     return ""
-                case UIKeyInputLeftArrow:
+                case UIKeyCommand.inputLeftArrow:
                     do_cmdline_cmd("call feedkeys(\"\\<Left>\")".char)
                     return ""
-                case UIKeyInputRightArrow:
+                case UIKeyCommand.inputRightArrow:
                     do_cmdline_cmd("call feedkeys(\"\\<Right>\")".char)
                     return ""
                 default:
-                        return sender.input.lowercased()
+                        return sender.input?.lowercased() ?? ""
                 }
 //                if(sender.input == UIKeyInputEscape){
 //                    return String(UnicodeScalar(Int(keyESC)))
@@ -285,7 +290,7 @@ class VimViewController: UIViewController, UIKeyInput, UITextInputTraits {
 //                    return sender.input.lowercaseString
 //                }
             case UIKeyModifierFlags.shift.rawValue:
-                return sender.input
+                return sender.input ?? ""
             case UIKeyModifierFlags.control.rawValue:
                 return UnicodeScalar(Int(getCTRLKeyCode(sender.input)))!.description
             default: return ""
@@ -295,7 +300,8 @@ class VimViewController: UIViewController, UIKeyInput, UITextInputTraits {
        
     }
     
-    func waitForChars(_ wtime: Int) -> Int {
+    
+    @objc func waitForChars(_ wtime: Int) -> Int {
      //   //print("Wait \(wtime)")
         let passed = Date().timeIntervalSince(lastKeyPress)*1000
         var wait = wtime
@@ -311,14 +317,14 @@ class VimViewController: UIViewController, UIKeyInput, UITextInputTraits {
      //print("Wait2 \(wait)")
      
      let expirationDate = Date(timeIntervalSinceNow: Double(wait)/1000.0)
-        RunLoop.current.acceptInput(forMode: RunLoopMode.defaultRunLoopMode, before: expirationDate)
+        RunLoop.current.acceptInput(forMode: RunLoop.Mode.default, before: expirationDate)
      let delay = expirationDate.timeIntervalSinceNow
      return delay < 0 ? 0 : 1
     
     }
    
     
-    func showShareSheetForURL(_ url: URL, mode: String) {
+    @objc func showShareSheetForURL(_ url: URL, mode: String) {
         let height = view.bounds.size.height
         if(mode == "Share") {
             documentController = UIDocumentInteractionController(url:url);
@@ -337,7 +343,7 @@ class VimViewController: UIViewController, UIKeyInput, UITextInputTraits {
     }
     
     
-    func pan(_ sender: UIPanGestureRecognizer) {
+    @objc func pan(_ sender: UIPanGestureRecognizer) {
         let translation = sender.translation(in: vimView!)
         
         let diffX = translation.x/(vimView!.char_width)
@@ -390,7 +396,7 @@ class VimViewController: UIViewController, UIKeyInput, UITextInputTraits {
         gui_send_mouse_event(event, Int32(clickLocation.x), Int32(clickLocation.y), 1, 0)
         
     }*/
-    func scroll(_ sender: UIPanGestureRecognizer) {
+    @objc func scroll(_ sender: UIPanGestureRecognizer) {
         if(sender.state == .began) {
             becomeFirstResponder()
             let clickLocation = sender.location(in: sender.view)

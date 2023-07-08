@@ -15,10 +15,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
     
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         var url: URL?
         
-        url = launchOptions?[UIApplicationLaunchOptionsKey.url] as? URL
+        url = launchOptions?[UIApplication.LaunchOptionsKey.url] as? URL
         
         
         //Start Vim!
@@ -27,7 +27,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
     }
     
-    func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any]) -> Bool {
+    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any]) -> Bool {
         if(url.isFileURL) {
             let file = "Inbox/"+url.lastPathComponent
             do_cmdline_cmd("tabedit \(file)".char)
@@ -38,7 +38,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     
-    func VimStarter(_ url: URL?) {
+    @objc func VimStarter(_ url: URL?) {
         guard let vimPath = Bundle.main.resourcePath else {return}
         let runtimePath = vimPath + "/runtime"
         vim_setenv("VIM".char, vimPath.char)
@@ -78,7 +78,7 @@ extension String {
     }
     
     func each(_ closure: (String) -> Void ) {
-        for digit in self.characters
+        for digit in self
         {
             closure(String(digit))
         }
