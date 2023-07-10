@@ -115,8 +115,10 @@ static int hex_digit(int c) {
 }
 
 VimViewController * getViewController() {
-    return (VimViewController*)[[[UIApplication sharedApplication] keyWindow] rootViewController];
+    return (VimViewController*)[[[[[UIApplication sharedApplication] keyWindow] rootViewController] childViewControllers] firstObject];
 }
+
+
 VimView * getView() {
     return [getViewController() vimView];
 }

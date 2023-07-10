@@ -43,20 +43,18 @@ class VimViewController: UIViewController, UIKeyInput, UITextInputTraits {
    // override var keyCommands:[UIKeyCommand]? { print("Show me the commands!"); return [UIKeyCommand(input:"[", modifierFlags:.Control, action:"keyPressed:")] }
     
     
-    
-    
     override func viewWillAppear(_ animated: Bool) {
         NotificationCenter.default.addObserver(self, selector: #selector(VimViewController.keyboardWillShow(_:)), name:UIResponder.keyboardWillShowNotification, object:nil)
         NotificationCenter.default.addObserver(self, selector: #selector(VimViewController.keyboardDidShow(_:)), name:UIResponder.keyboardDidShowNotification, object:nil)
         NotificationCenter.default.addObserver(self, selector: #selector(VimViewController.keyboardWillHide(_:)), name:UIResponder.keyboardWillHideNotification, object:nil)
     }
     
+    
     override func viewDidLoad() {
         print("DidLoad Bounds \(UIScreen.main.bounds)")
         vimView = VimView(frame: view.frame)
         vimView!.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         self.view.addSubview(vimView!)
-
         
         registerHotkeys()
         
@@ -70,23 +68,21 @@ class VimViewController: UIViewController, UIKeyInput, UITextInputTraits {
         scrollRecognizer.maximumNumberOfTouches=1
         
         let mouseRecognizer = UIPanGestureRecognizer(target:self, action:#selector(VimViewController.pan(_:)))
-        mouseRecognizer.minimumNumberOfTouches=2
-        mouseRecognizer.maximumNumberOfTouches=2
+        mouseRecognizer.minimumNumberOfTouches = 2
+        mouseRecognizer.maximumNumberOfTouches = 2
         vimView?.addGestureRecognizer(mouseRecognizer)
         
         inputAssistantItem.leadingBarButtonGroups=[]
         inputAssistantItem.trailingBarButtonGroups=[]
-        
-    
-        
-        
     }
+    
     
     override func viewDidAppear(_ animated: Bool) {
         #if  FEAT_GUI
         //print("Hallo!")
         #endif
     }
+    
     
     @objc func click(_ sender: UITapGestureRecognizer) {
         becomeFirstResponder()
@@ -97,8 +93,8 @@ class VimViewController: UIViewController, UIKeyInput, UITextInputTraits {
     
     @objc func longPress(_ sender: UILongPressGestureRecognizer) {
         if(sender.state == .began) {
-        becomeFirstResponder()
-        toggleKeyboardBar()
+            becomeFirstResponder()
+            toggleKeyboardBar()
         }
     }
     
@@ -145,9 +141,10 @@ class VimViewController: UIViewController, UIKeyInput, UITextInputTraits {
     }
 
     
-   override var canBecomeFirstResponder : Bool {
+    override var canBecomeFirstResponder : Bool {
         return hasBeenFlushedOnce
     }
+    
     
     override var canResignFirstResponder : Bool {
         return true
@@ -159,9 +156,11 @@ class VimViewController: UIViewController, UIKeyInput, UITextInputTraits {
         return false
     }
     
+    
     func insertText(_ text: String) {
+        print("INSERT TEXT: \(text)")
         var escapeString = text.char
-        if(text=="\n") {
+        if(text == "\n") {
             //print("Enter!")
             escapeString = UnicodeScalar(Int(keyCAR))!.description.char
         }
@@ -173,9 +172,10 @@ class VimViewController: UIViewController, UIKeyInput, UITextInputTraits {
         flush()
         vimView?.setNeedsDisplay((vimView?.dirtyRect)!)
     }
+    
+    
     func deleteBackward() {
-            insertText(UnicodeScalar(Int(keyBS))!.description)
-        
+        insertText(UnicodeScalar(Int(keyBS))!.description)
     }
     
     // Mark: UITextInputTraits
@@ -238,7 +238,7 @@ class VimViewController: UIViewController, UIKeyInput, UITextInputTraits {
     }
 
     
-    func registerHotkeys(){
+    func registerHotkeys() {
         keyCommandArray = []
         hotkeys.each { letter in
             [[], [.control], [.command]].map( {
@@ -258,11 +258,11 @@ class VimViewController: UIViewController, UIKeyInput, UITextInputTraits {
         //print("Number of Hotkeys \(keyCommands?.count)")
     }
     
+    
     @objc func keyPressed(_ sender: UIKeyCommand) {
         lastKeyPress = Date()
-        
         //print("Input \(sender.input), Modifier \(sender.modifierFlags)")
-        var key:String {
+        var key: String {
             switch sender.modifierFlags.rawValue {
             case 0:
                 switch sender.input {
@@ -281,7 +281,7 @@ class VimViewController: UIViewController, UIKeyInput, UITextInputTraits {
                     do_cmdline_cmd("call feedkeys(\"\\<Right>\")".char)
                     return ""
                 default:
-                        return sender.input?.lowercased() ?? ""
+                    return sender.input?.lowercased() ?? ""
                 }
 //                if(sender.input == UIKeyInputEscape){
 //                    return String(UnicodeScalar(Int(keyESC)))
@@ -296,8 +296,7 @@ class VimViewController: UIViewController, UIKeyInput, UITextInputTraits {
             default: return ""
             }
         }
-       insertText(key)
-       
+        insertText(key)
     }
     
     
@@ -309,18 +308,17 @@ class VimViewController: UIViewController, UIKeyInput, UITextInputTraits {
         
         if(passed < 1000) {
             wait = 10
-        } else if(wtime < 0 ){
+        }
+        else if(wtime < 0 ){
             wait = 4000
         }
         
-     
-     //print("Wait2 \(wait)")
-     
-     let expirationDate = Date(timeIntervalSinceNow: Double(wait)/1000.0)
+        //print("Wait2 \(wait)")
+        
+        let expirationDate = Date(timeIntervalSinceNow: Double(wait)/1000.0)
         RunLoop.current.acceptInput(forMode: RunLoop.Mode.default, before: expirationDate)
-     let delay = expirationDate.timeIntervalSinceNow
-     return delay < 0 ? 0 : 1
-    
+        let delay = expirationDate.timeIntervalSinceNow
+        return delay < 0 ? 0 : 1
     }
    
     
@@ -396,6 +394,8 @@ class VimViewController: UIViewController, UIKeyInput, UITextInputTraits {
         gui_send_mouse_event(event, Int32(clickLocation.x), Int32(clickLocation.y), 1, 0)
         
     }*/
+    
+    
     @objc func scroll(_ sender: UIPanGestureRecognizer) {
         if(sender.state == .began) {
             becomeFirstResponder()
@@ -407,8 +407,7 @@ class VimViewController: UIViewController, UIKeyInput, UITextInputTraits {
     
         var diffY = translation.y/(vimView!.char_height)
         
-        
-//        print("Vorher \(diffY): \(ceil(diffY))")
+        // print("Vorher \(diffY): \(ceil(diffY))")
         
         if(diffY <= -1) {
             sender.setTranslation(CGPoint(x: 0, y: translation.y-ceil(diffY)*vimView!.char_height), in: vimView!)
@@ -426,12 +425,6 @@ class VimViewController: UIViewController, UIKeyInput, UITextInputTraits {
             //gui_send_mouse_event(MOUSE_4, Int32(clickLocation.x), Int32(clickLocation.y), 0, 0);
             diffY -= 1
         }
-        
-        
     }
-    
-    
-
-    
 }
 
